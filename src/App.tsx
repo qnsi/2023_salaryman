@@ -5,14 +5,15 @@ import "./App.css";
 type Task = {
   name: string;
   status: "TODO" | "DONE";
+  time: number;
 };
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
-  const addTask = (newTask: string) => {
+  const addTask = (newTask: string, time: number) => {
     setTasks((tasks: Task[]) =>
-      tasks.concat([{ name: newTask, status: "TODO" }]),
+      tasks.concat([{ name: newTask, status: "TODO", time }]),
     );
   };
 
@@ -49,19 +50,38 @@ function App() {
   );
 }
 
-const AddTask = ({ addTask }: { addTask: (newTask: string) => void }) => {
+const AddTask = ({
+  addTask,
+}: {
+  addTask: (newTask: string, time: number) => void;
+}) => {
   const [newTask, setNewTask] = useState("");
+  const [newTaskTime, setNewTaskTime] = useState(0);
 
   const handleAddTask = () => {
+    addTask(newTask, newTaskTime);
     setNewTask("");
-    addTask(newTask);
+    setNewTaskTime(0);
+  };
+
+  const handleNewTaskTimeChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setNewTaskTime(Number(event.currentTarget.value));
   };
 
   return (
     <div style={{ margin: "10px 10px" }}>
       <input
+        placeholder={"task name"}
         value={newTask}
         onChange={(event) => setNewTask(event.currentTarget.value)}
+      />
+      <input
+        placeholder={"time in minutes"}
+        value={newTaskTime}
+        type={"number"}
+        onChange={handleNewTaskTimeChange}
       />
       <button onClick={handleAddTask}>Add task</button>
     </div>
@@ -83,6 +103,9 @@ const TaskList = ({
         return (
           <div style={{ margin: "10px 10px" }}>
             <span style={{ marginRight: 10 }}>{task.name}</span>
+            <span style={{ marginRight: 10 }}>
+              {task.time ? task.time + "min" : ""}
+            </span>
             <button onClick={() => deleteTask(task)}>Delete</button>
             <button onClick={() => markTaskDone(task)}>Done</button>
           </div>
