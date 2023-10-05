@@ -1,0 +1,40 @@
+import React, { useState } from "react";
+
+import "./App.css";
+
+type Task = {
+  name: string;
+};
+
+function App() {
+  const [newTask, setNewTask] = useState("");
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  const addTask = () => {
+    setTasks((tasks: Task[]) => tasks.concat([{ name: newTask }]));
+    setNewTask("");
+  };
+
+  return (
+    <div className="App">
+      <div style={{ display: "inline-block" }}>
+        <input
+          value={newTask}
+          onChange={(event) => setNewTask(event.currentTarget.value)}
+        />
+        <button onClick={addTask}>Add task</button>
+      </div>
+
+      {tasks.map((task) => {
+        return (
+          <div style={{ display: "inline-block" }}>
+            <p>{task.name}</p>
+            <button>Delete</button>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export default App;
