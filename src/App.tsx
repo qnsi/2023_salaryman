@@ -1,41 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 
 import "./App.css";
+import { DoneTaskList, TaskList } from "./components/TaskList";
+import { Scheduling, SchedulingSidebar } from "./components/Scheduling";
 
-type Task = {
+export type Task = {
   name: string;
   status: "TODO" | "DONE";
   time: number;
   scheduling: Scheduling;
-};
-
-enum Scheduling {
-  ALL = "all tasks",
-  TODAY = "today",
-  THIS_WEEK = "this week",
-  THIS_MONTH = "this month",
-  THIS_YEAR = "this year",
-}
-
-const SidebarSchedulingButton = ({
-  scheduling,
-  setScheduling,
-  currentScheduling,
-}: {
-  scheduling: Scheduling;
-  setScheduling: React.Dispatch<React.SetStateAction<Scheduling>>;
-  currentScheduling: Scheduling;
-}) => {
-  return (
-    <p
-      style={{
-        fontWeight: currentScheduling === scheduling ? "bold" : "normal",
-      }}
-      onClick={() => setScheduling(scheduling)}
-    >
-      {scheduling}
-    </p>
-  );
 };
 
 function App() {
@@ -97,30 +70,9 @@ function App() {
   return (
     <div style={{ display: "flex", flexDirection: "row" }} className="App">
       <div style={{ width: "20%" }}>
-        <SidebarSchedulingButton
-          scheduling={Scheduling.ALL}
+        <SchedulingSidebar
           setScheduling={setScheduling}
-          currentScheduling={scheduling}
-        />
-        <SidebarSchedulingButton
-          scheduling={Scheduling.TODAY}
-          setScheduling={setScheduling}
-          currentScheduling={scheduling}
-        />
-        <SidebarSchedulingButton
-          scheduling={Scheduling.THIS_WEEK}
-          setScheduling={setScheduling}
-          currentScheduling={scheduling}
-        />
-        <SidebarSchedulingButton
-          scheduling={Scheduling.THIS_MONTH}
-          setScheduling={setScheduling}
-          currentScheduling={scheduling}
-        />
-        <SidebarSchedulingButton
-          scheduling={Scheduling.THIS_YEAR}
-          setScheduling={setScheduling}
-          currentScheduling={scheduling}
+          scheduling={scheduling}
         />
       </div>
       <div style={{ width: "80%", textAlign: "left" }}>
@@ -181,53 +133,7 @@ const AddTask = ({
   );
 };
 
-const TaskList = ({
-  tasks,
-  deleteTask,
-  markTaskDone,
-  startTimer,
-}: {
-  tasks: Task[];
-  deleteTask: (task: Task) => void;
-  markTaskDone: (task: Task) => void;
-  startTimer: (task: Task) => void;
-}) => {
-  return (
-    <div>
-      {tasks.map((task) => {
-        return (
-          <div style={{ margin: "10px 10px" }}>
-            <span style={{ marginRight: 10 }}>{task.name}</span>
-            <span style={{ marginRight: 10 }}>
-              {task.time ? task.time + "min" : ""}
-            </span>
-            <button onClick={() => deleteTask(task)}>Delete</button>
-            <button onClick={() => startTimer(task)}>Start</button>
-            <button onClick={() => markTaskDone(task)}>Done</button>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
-const DoneTaskList = ({ tasks }: { tasks: Task[] }) => {
-  return (
-    <div>
-      {tasks.map((task) => {
-        return (
-          <div style={{ margin: "10px 10px", textDecoration: "line-through" }}>
-            <span style={{ marginRight: 10 }}>{task.name}</span>
-            <span style={{ marginRight: 10 }}>time: </span>
-            <TimeInMin time={task.time} />
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
-const TimeInMin = ({ time }: { time: number }) => {
+export const TimeInMin = ({ time }: { time: number }) => {
   return (
     <>
       {Math.floor(time / 60)}:{time % 60}
