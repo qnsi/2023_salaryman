@@ -74,6 +74,21 @@ function App() {
     stopTimer();
   };
 
+  const updateTask = (
+    taskToUpdate: Task,
+    newTaskName: string,
+    newTags: string[],
+  ) => {
+    setTasks((tasks) =>
+      tasks.map((task) => {
+        if (task.name === taskToUpdate.name) {
+          return { ...task, name: newTaskName, tags: newTags };
+        }
+        return task;
+      }),
+    );
+  };
+
   const startTimer = (task: Task) => {
     setTime(0);
     setIsTimerRunning(task.name);
@@ -109,6 +124,7 @@ function App() {
           filterByTag={filterByTag}
           deleteTask={deleteTask}
           markTaskDone={markTaskDone}
+          sendUpdateTask={updateTask}
           startTimer={startTimer}
         />
         <DoneTaskList tasks={doneTasks} filterByTag={filterByTag} />
