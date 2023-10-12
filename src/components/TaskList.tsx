@@ -3,18 +3,24 @@ import { Task, TimeInMin } from "../App";
 
 export const TaskList = ({
   tasks,
+  filterByTag,
   deleteTask,
   markTaskDone,
   startTimer,
 }: {
   tasks: Task[];
+  filterByTag: string;
   deleteTask: (task: Task) => void;
   markTaskDone: (task: Task) => void;
   startTimer: (task: Task) => void;
 }) => {
+  const tasksFilteredByTag = !!filterByTag
+    ? tasks.filter((task) => (task.tags || []).includes(filterByTag))
+    : tasks;
+
   return (
     <div>
-      {tasks.map((task) => {
+      {tasksFilteredByTag.map((task) => {
         return (
           <SingleTask
             task={task}
@@ -42,6 +48,7 @@ const SingleTask = ({
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // unfinished dragging
     const handleDragStart = (event: DragEvent) => {
       event.dataTransfer!.effectAllowed = "move";
       event.dataTransfer?.setData("text", task.name);
@@ -67,12 +74,26 @@ const SingleTask = ({
       <button onClick={() => deleteTask(task)}>Delete</button>
       <button onClick={() => startTimer(task)}>Start</button>
       <button onClick={() => markTaskDone(task)}>Done</button>
+      {task.tags &&
+        task.tags.map((tag) => (
+          <span style={{ color: "#888", margin: 3 }}>{tag}</span>
+        ))}
     </div>
   );
 };
 
-export const DoneTaskList = ({ tasks }: { tasks: Task[] }) => {
+export const DoneTaskList = ({
+  tasks,
+  filterByTag,
+}: {
+  tasks: Task[];
+  filterByTag: string;
+}) => {
   const [showDoneTasks, setShowDoneTasks] = useState(true);
+
+  const tasksFilteredByTag = !!filterByTag
+    ? tasks.filter((task) => (task.tags || []).includes(filterByTag))
+    : tasks;
 
   return (
     <>
@@ -81,7 +102,7 @@ export const DoneTaskList = ({ tasks }: { tasks: Task[] }) => {
       </button>
       <div>
         {showDoneTasks &&
-          tasks.map((task) => {
+          tasksFilteredByTag.map((task) => {
             return (
               <div
                 style={{ margin: "10px 10px", textDecoration: "line-through" }}
@@ -89,6 +110,10 @@ export const DoneTaskList = ({ tasks }: { tasks: Task[] }) => {
                 <span style={{ marginRight: 10 }}>{task.name}</span>
                 <span style={{ marginRight: 10 }}>time: </span>
                 <TimeInMin time={task.time} />
+                {task.tags &&
+                  task.tags.map((tag) => (
+                    <span style={{ color: "#888", margin: 3 }}>{tag}</span>
+                  ))}
               </div>
             );
           })}
